@@ -5,22 +5,14 @@ Player::Player(PlayerTurn turn): turn(turn) {
 	
 }
 
-Movement Player::getMovement(Board* board) {
+Player& Player::create(PlayerTurn turn, Type type) {
+	switch (type) {
+		case HUMAN:
+			return *new HumanPlayer(turn);
+		case RANDOM_AI:
+			return *new RandomAIPlayer(turn);
+	}
 
-	int orRow, desRow;
-	char orCol, desCol;
-
-	std::cin >> orCol >> orRow >> desCol >> desRow;
-
-	orRow--;
-	desRow--;
-
-	Position::Col orRealCol = getColFromChar(orCol);
-	Position::Col desRealCol = getColFromChar(desCol);
-	
-	Position origin{orRow, orRealCol};
-	Position destiny{desRow, desRealCol};
-	return Movement{origin, destiny, board, true};
 }
 
 PlayerTurn Player::getTurn() {
@@ -39,4 +31,14 @@ Position::Col Player::getColFromChar(char col) {
 		case 'H': return Position::Col::H;
 		default: return Position::Col::NOT_VALID;
 	}
+}
+
+std::ostream& operator <<(std::ostream& outputStream, const Player& p) {
+	if (PLAYER1 == p.turn) {
+		outputStream << "Player 1 (Black)";
+	} else {
+		outputStream << "Player 2 (White)";
+	}
+
+	return outputStream;
 }

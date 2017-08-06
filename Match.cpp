@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 
-Match::Match(Player player1, Player player2): player1(player1), player2(player2) {};
+Match::Match(Player& player1, Player& player2): player1(player1), player2(player2) {};
 
 void Match::start() {
 
@@ -27,11 +27,9 @@ void Match::start() {
 		switch(turn) {
 			case PLAYER1:
 				currentPlayer = &player1;
-				std::cout << "Player 1 (Black), your turn:";
 				break;
 			case PLAYER2:
 				currentPlayer = &player2;
-				std::cout << "Player 2 (White), your turn:";
 				break;
 		}
 
@@ -44,7 +42,9 @@ void Match::start() {
 		}
 
 		nextMove.execute();
-		
+		std::cin.get();
+		std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
+
 		if (turn == PLAYER1) turn = PLAYER2;
 		else turn = PLAYER1;
 		

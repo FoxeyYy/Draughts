@@ -57,6 +57,7 @@ bool Movement::canEat() {
 	Position nextPos = getNextPosition();
 
 	return 	nextPos.withinBounds() &&
+		(*board)(origin.getRow(), origin.getCol()).owner != (*board)(destiny.getRow(), destiny.getCol()).owner &&
 		EMPTY == (*board)(nextPos.getRow(), nextPos.getCol()).type;
 }
 

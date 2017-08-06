@@ -77,22 +77,41 @@ class Movement {
 
 
 class Player {
-	private:
+	protected:
 		PlayerTurn turn;
 		Position::Col getColFromChar(char col);
-	public:
 		Player(PlayerTurn turn);
-		Movement getMovement(Board *board);
+	public:
+		enum Type {
+			HUMAN, RANDOM_AI
+		};
+		static Player& create(PlayerTurn turn, Type type);
 		PlayerTurn getTurn();
+		virtual Movement getMovement(Board *board) = 0;
+		friend std::ostream& operator <<(std::ostream& outputStream, const Player& p);
+};
+
+class HumanPlayer: public Player {
+		public:
+			HumanPlayer(PlayerTurn turn);
+			Movement getMovement(Board *board) final;
+};
+
+class RandomAIPlayer: public Player {
+		public:
+			RandomAIPlayer(PlayerTurn turn);
+			Movement getMovement(Board *board) final;
 };
 
 class Board {
 	public:
-		std::vector<Piece> getPiecesFor(Player player);
+		std::vector<Piece> getPiecesFor(Player& player);
 		PlayerTurn getOwner(Position pos);
 		bool playerCanMove(PlayerTurn player);
 		bool pieceHasFreedom(Position pos);
 		Piece getAt(Position pos);
+		std::vector<Position> piecesWithFreedomOf(PlayerTurn player);
+		std::vector<Position> possibleDestiniesFor(Position origin);
 
 		Piece& operator ()(int row, int col);
 
@@ -122,11 +141,11 @@ class Board {
 class Match {
 	private:
 		Board board;
-		Player player1;
-		Player player2;
+		Player& player1;
+		Player& player2;
 		PlayerTurn getRandomTurn();
 	
 	public:
-		Match(Player player1, Player player2);
+		Match(Player& player1, Player& player2);
 		void start();
 };
