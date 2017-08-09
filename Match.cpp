@@ -37,12 +37,12 @@ void Match::start() {
 		Movement nextMove = currentPlayer->getMovement(&board);
 
 		if(!nextMove.isValid(currentPlayer->getTurn())) {
-			std::cout << "Not valid movement, please retry" << std::endl;
+			std::cout << "Not a valid movement, please retry" << std::endl;
 			continue;
 		}
 
 		nextMove.execute();
-		std::cin.get();
+		//std::cin.get();
 		std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
 
 		if (turn == PLAYER1) turn = PLAYER2;

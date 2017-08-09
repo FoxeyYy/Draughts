@@ -11,6 +11,8 @@ Player& Player::create(PlayerTurn turn, Type type) {
 			return *new HumanPlayer(turn);
 		case RANDOM_AI:
 			return *new RandomAIPlayer(turn);
+		case AB_AI:
+			return *new AlphaBetaAIPlayer(turn);
 	}
 
 }

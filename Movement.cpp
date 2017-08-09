@@ -112,9 +112,26 @@ bool Movement::isValid(PlayerTurn player) {
 	if ((*board)(origin.getRow(), origin.getCol()).type == MAN) {
 		return getLength() == MAX_LENGTH_MAN;
 	} else {
-		return true;
+		return clearPath();
 	}
 
+}
+
+bool Movement::clearPath() {
+	int 	rowDir = -sign(origin.getRow() - destiny.getRow()),
+		colDir = -sign(origin.getCol() - destiny.getCol());
+
+	int 	nextRow = origin.getRow(),
+		nextCol = origin.getCol();
+
+	while (true) {
+		nextRow += rowDir;
+		nextCol += colDir;
+		if(nextRow == destiny.getRow() && nextCol == destiny.getCol()) break;
+		if ((*board)(nextRow, nextCol).type != EMPTY) return false;
+	}
+
+	return true;
 }
 
 void Movement::execute() {

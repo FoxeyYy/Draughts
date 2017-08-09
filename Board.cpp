@@ -6,6 +6,72 @@ PlayerTurn Board::getOwner(Position pos) {
 
 }
 
+int Board::getPiecesFor(PlayerTurn player, PieceType type) {
+	int numPieces = 0;
+
+	for(int i=0; i<NUM_ROWS; i++) {
+		for(int j=0; j<NUM_COLS; j++) {
+			if (	player == board[i][j].owner && 
+				type == board[i][j].type) {
+				numPieces++;
+			}
+		}
+	}
+
+	return numPieces;
+}
+
+int Board::scoreByDistanceToKings(PlayerTurn player) {
+	int score = 0;
+	int firstRow = player == PLAYER1 ? 0: NUM_ROWS;
+	int lastRow = NUM_ROWS - firstRow;
+	int direction = player == PLAYER1 ? 1: -1;
+
+	for (int row = firstRow; row<lastRow; row+=direction) {
+		for (int col = 0; col<NUM_COLS; col++) {
+			if (board[row][col].owner == player &&
+				board[row][col].type == MAN) {
+				score += row+1;
+			}
+		}
+	}
+
+	return score;
+
+}
+
+int Board::numInvenciblePiecesFor(PlayerTurn player, PieceType type) {
+	int numPieces = 0;
+
+	for(int i=0; i<NUM_ROWS; i++) {
+		for(int j=0; j<NUM_COLS; j++) {
+			if (	player == board[i][j].owner && 
+				type == board[i][j].type && 
+				!pieceCanBeEaten(Position{i, (Position::Col)j})) {
+				numPieces++;
+			}
+		}
+	}
+
+	return numPieces;
+}
+
+int Board::numUnusablePiecesFor(PlayerTurn player, PieceType type) {
+	int numPieces = 0;
+
+	for(int i=0; i<NUM_ROWS; i++) {
+		for(int j=0; j<NUM_COLS; j++) {
+			if (	player == board[i][j].owner && 
+				type == board[i][j].type && 
+				!pieceHasFreedom(Position{i, (Position::Col)j})) {
+				numPieces++;
+			}
+		}
+	}
+
+	return numPieces;
+}
+
 bool Board::playerCanMove(PlayerTurn player) {
 	for(int i=0; i<NUM_ROWS; i++) {
 		for(int j=0; j<NUM_COLS; j++) {
@@ -40,6 +106,28 @@ bool Board::pieceHasFreedom(Position position) {
 	return false;
 }
 
+bool Board::pieceCanBeEaten(Position pos) {
+	int movements[2] {-1, 1};
+
+	for (int rowMov: movements) {
+		for (int colMov: movements) {
+			Position origin {pos.getRow() + rowMov, (Position::Col)(pos.getCol() + colMov)};
+			if (!origin.withinBounds() || 
+				board[origin.getRow()][origin.getCol()].owner ==
+				board[pos.getRow()][pos.getCol()].owner) continue;
+
+			Movement mov{origin, pos, this};
+			Position next = mov.getNextPosition();
+			if (!next.withinBounds()) continue;
+			if (board[next.getRow()][next.getCol()].owner != board[pos.getRow()][pos.getCol()].owner) {
+				return true;
+			}			
+		}
+	}
+	
+	return false;
+}
+
 std::vector<Position> Board::piecesWithFreedomOf(PlayerTurn player) {
 	std::vector<Position> positions{};
 
@@ -65,17 +153,9 @@ std::vector<Position> Board::possibleDestiniesFor(Position origin) {
 			int length = 1;
 			while (true) {
 				Position newDestiny {origin.getRow() + length*rowOffset, (Position::Col) (origin.getCol() + length*colOffset)};
-				if (!newDestiny.withinBounds()) break;
-				if (MAN == getAt(origin).type && length > 1) break;
-				if (getAt(newDestiny).owner == getAt(origin).owner) break;
-
 				Movement eatMov {origin, newDestiny, this};
-				if ( 	getAt(newDestiny).type == EMPTY ||
-					(getAt(newDestiny).owner != getAt(origin).owner) &&
-					eatMov.canEat()) {
-						destinies.push_back(newDestiny);
-				}
-
+				if ( !eatMov.isValid(getAt(origin).owner)) break;
+				destinies.push_back(newDestiny);
 				length++;
 			}
 

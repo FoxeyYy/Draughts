@@ -3,7 +3,8 @@
 
 void showOptions() {
 	std::cout <<	"0 Human player" << std::endl
-		  <<	"1 Random AI" << std::endl << std::endl;
+		  <<	"1 Random AI" << std::endl
+		  <<	"2 Alpha Beta Pruning AI" << std::endl << std::endl;
 }
 
 Player::Type getPlayerType() {

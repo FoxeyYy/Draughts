@@ -66,6 +66,7 @@ class Movement {
 		bool isValid(PlayerTurn player);
 		int getLength();
 		int pathLength();
+		bool clearPath();
 		Position getNextPosition();
 		Movement* findLongestPath();
 		void execute();
@@ -83,7 +84,7 @@ class Player {
 		Player(PlayerTurn turn);
 	public:
 		enum Type {
-			HUMAN, RANDOM_AI
+			HUMAN, RANDOM_AI, AB_AI
 		};
 		static Player& create(PlayerTurn turn, Type type);
 		PlayerTurn getTurn();
@@ -103,12 +104,26 @@ class RandomAIPlayer: public Player {
 			Movement getMovement(Board *board) final;
 };
 
+class AlphaBetaAIPlayer: public Player {
+		private:
+			Movement *bestMove;
+			int search(Board &board, int depth, int a, int b, bool maximizing);
+			int heuristic(Board &board);
+		public:
+			AlphaBetaAIPlayer(PlayerTurn turn);
+			Movement getMovement(Board *board) final;
+};
+
 class Board {
 	public:
-		std::vector<Piece> getPiecesFor(Player& player);
+		int scoreByDistanceToKings(PlayerTurn player);	//Each piece in the farest row to king's row is worth 1, the closests are worth 8
+		int numInvenciblePiecesFor(PlayerTurn player, PieceType type);
+		int numUnusablePiecesFor(PlayerTurn player, PieceType type);
+		int getPiecesFor(PlayerTurn player, PieceType type);
 		PlayerTurn getOwner(Position pos);
 		bool playerCanMove(PlayerTurn player);
 		bool pieceHasFreedom(Position pos);
+		bool pieceCanBeEaten(Position pos);
 		Piece getAt(Position pos);
 		std::vector<Position> piecesWithFreedomOf(PlayerTurn player);
 		std::vector<Position> possibleDestiniesFor(Position origin);
