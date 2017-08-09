@@ -42,7 +42,6 @@ void Match::start() {
 		}
 
 		nextMove.execute();
-		//std::cin.get();
 		std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
 
 		if (turn == PLAYER1) turn = PLAYER2;

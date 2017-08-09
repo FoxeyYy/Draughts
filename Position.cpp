@@ -35,12 +35,11 @@ std::vector<Movement*> Position::getPossibleEats(Board& board) {
 					if (eatMov->canEat()) {
 						moves.push_back(eatMov);
 					}
+					break;
 				}
 
 				length++;
 			}
-
-			
 		}
 	}
 
