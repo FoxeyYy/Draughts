@@ -10,6 +10,14 @@ Besides an Human player, the currently implemented AIs are:
 1. Random AI
 2. Alpha Beta Pruning
 
+# Rules
+
+1. Pieces can be moved forward and backwards.
+2. An eat movement is forced to eat the maximum possible number of pieces.
+3. Men can only move to adjacent positions.
+4. Once a man reach other's player limit, it will be promoted to king, in this state a piece can use movements of length greater than one.
+5. The match ends once a player has no pieces left or it cannot use any.
+
 # Random AI
 A random destiny will be choseon for a previously random chosen destiny, it does even win sometimes!
 
